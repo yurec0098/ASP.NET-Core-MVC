@@ -9,6 +9,7 @@ namespace Lesson1_1
 	/// </summary>
 	public partial class MainWindow : Window
 	{
+		private int sleepTime = 500;
 		public MainWindow()
 		{
 			InitializeComponent();
@@ -30,8 +31,13 @@ namespace Lesson1_1
 						tb.Text += $", {FibonacciIteration(i)}";
 				});
 
-				Thread.Sleep(500);
+				Thread.Sleep(sleepTime);
 			}
+		}
+
+		private void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+		{
+			sleepTime = (int)e.NewValue;
 		}
 
 		private decimal FibonacciIteration(int n)

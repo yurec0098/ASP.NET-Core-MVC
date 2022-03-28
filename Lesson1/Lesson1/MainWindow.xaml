@@ -7,6 +7,9 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
 	<Grid>
-		<TextBox x:Name="textBox" Margin="25,10,25,100" TextWrapping="Wrap"/>
+		<TextBox x:Name="textBox" Margin="25,10,25,65" TextWrapping="Wrap"/>
+
+		<Slider Minimum="25" Maximum="2500" Value="500" TickFrequency="25" TickPlacement="BottomRight" IsSnapToTickEnabled="True"
+				ValueChanged="Slider_ValueChanged" VerticalAlignment="Bottom" Margin="25,0,25,10" Height="50" />
 	</Grid>
 </Window>
