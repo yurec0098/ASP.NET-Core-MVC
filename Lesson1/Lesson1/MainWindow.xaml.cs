@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -15,23 +16,45 @@ namespace Lesson1_1
 			InitializeComponent();
 			DataContext = this;
 
-			new Thread(() => RunFibonachi(100, textBox)) { IsBackground = true }.Start();
+			var thread = new Thread(() => RunFibonachi(100, textBox)) { IsBackground = true };
+			thread.Start();
+
+			//	Делаем прерывание через время в другом потоке
+			new Thread(() =>
+			{
+				Thread.Sleep(15000);
+				thread.Interrupt();
+			})
+			{ IsBackground = true }.Start();
 		}
 
 		private void RunFibonachi(int length, TextBox tb)
 		{
-			tb.Dispatcher.Invoke(() => tb.Text = string.Empty);
-			for (int i = -100; i < length; i++)
+			try
 			{
-				tb.Dispatcher.Invoke(() =>
-				{
-					if (string.IsNullOrEmpty(tb.Text))
-						tb.Text += FibonacciIteration(i);
-					else
-						tb.Text += $", {FibonacciIteration(i)}";
-				});
+				var fibonachiText = string.Empty;
+				tb.Dispatcher.Invoke(() => tb.Text = string.Empty);
 
-				Thread.Sleep(sleepTime);
+				for (int i = -100; i < length; i++)
+				{
+					if (string.IsNullOrEmpty(fibonachiText))
+						fibonachiText += FibonacciIteration(i);
+					else
+						fibonachiText += $", {FibonacciIteration(i)}";
+
+					tb.Dispatcher.Invoke(() => tb.Text = fibonachiText);
+
+					if (sleepTime > 0)
+						Thread.Sleep(sleepTime);
+				}
+			}
+			catch (ThreadInterruptedException ex)
+			{
+				tb.Dispatcher.Invoke(() => tb.Text = $"{ex.Message}\n{ex.InnerException?.Message}");
+			}
+			catch (ThreadAbortException ex)
+			{
+				tb.Dispatcher.Invoke(() => tb.Text = $"{ex.Message}\n{ex.InnerException?.Message}");
 			}
 		}
 
