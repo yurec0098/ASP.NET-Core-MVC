@@ -9,6 +9,7 @@ namespace Lesson1_1
 	/// </summary>
 	public partial class MainWindow : Window
 	{
+		private int sleepTime = 500;
 		public MainWindow()
 		{
 			InitializeComponent();
@@ -19,19 +20,26 @@ namespace Lesson1_1
 
 		private void RunFibonachi(int length, TextBox tb)
 		{
+			var fibonachiText = string.Empty;
 			tb.Dispatcher.Invoke(() => tb.Text = string.Empty);
+
 			for (int i = -100; i < length; i++)
 			{
-				tb.Dispatcher.Invoke(() =>
-				{
-					if (string.IsNullOrEmpty(tb.Text))
-						tb.Text += FibonacciIteration(i);
-					else
-						tb.Text += $", {FibonacciIteration(i)}";
-				});
+				if (string.IsNullOrEmpty(fibonachiText))
+					fibonachiText += FibonacciIteration(i);
+				else
+					fibonachiText += $", {FibonacciIteration(i)}";
 
-				Thread.Sleep(500);
+				tb.Dispatcher.Invoke(() => tb.Text = fibonachiText);
+
+				if (sleepTime > 0)
+					Thread.Sleep(sleepTime);
 			}
+		}
+
+		private void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+		{
+			sleepTime = (int)e.NewValue;
 		}
 
 		private decimal FibonacciIteration(int n)
